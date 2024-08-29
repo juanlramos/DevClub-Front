@@ -1,12 +1,18 @@
 import { FaTrash } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 import api from "../../services/api";
 import { useEffect, useState, useRef } from "react";
+import Modal from 'react-modal';
 
 import './style.css'
+
+Modal.setAppElement('#root'); // Necessário para acessibilidade
 
 function Home() {
 
   const [users, setUsers] = useState([])
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
 
   const inputName = useRef()
   const inputAge = useRef()
@@ -34,6 +40,23 @@ function Home() {
     location.reload()
   }
 
+  const openModal = (id) => {
+    setUserIdToDelete(id);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setUserIdToDelete(null);
+  };
+
+  const confirmDelete = () => {
+    if (userIdToDelete !== null) {
+      deleteUsers(userIdToDelete);
+    }
+    closeModal();
+  };
+
   useEffect(() => {
     getUsers()
   }, [])
@@ -58,12 +81,30 @@ function Home() {
             <p>Email: <span> {user.email} </span> </p>
           </div>
 
-          <button onClick={() => deleteUsers(user.id)}>
+          <button onClick={() => openModal(user.id)}>
             <FaTrash />
           </button>
         </div>
       ))}
       
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Confirmar Exclusão"
+        className='background'
+      >
+        <div className="modal">
+          <div className="titulo">
+            <h2>Confirmar Exclusão</h2>
+            <button onClick={closeModal}><IoMdClose /></button>
+          </div>
+          <p>Tem certeza de que deseja excluir este usuário?</p>
+          <div className="botoes">
+            <button className="confirm" onClick={confirmDelete}>Confirmar</button>
+            <button className="cancel" onClick={closeModal}>Cancelar</button>
+          </div>
+        </div>
+      </Modal>
 
     </div>
 
