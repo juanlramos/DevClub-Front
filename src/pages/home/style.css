@@ -220,6 +220,12 @@ h1{
             background-color: rgba(211, 211, 211, 0.301);
         }
     }
+    /*Retirar arrow/spinner do input number*/
+    & input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 }
 
 .editModalBackground{
