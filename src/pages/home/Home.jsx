@@ -1,22 +1,18 @@
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaPencilAlt } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import api from "../../services/api";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Modal from 'react-modal';
 
 import './style.css'
 
-Modal.setAppElement('#root'); // Necessário para acessibilidade
-
 function Home() {
 
   const [users, setUsers] = useState([])
+  const [user, setUser] = useState({ name: '', age: '', email: '' });
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
-
-  const inputName = useRef()
-  const inputAge = useRef()
-  const inputEmail = useRef()
+  const [modalEdit, setModalEdit] = useState(false)
 
   async function getUsers(){
     const usersFromApi = await api.get('/usuarios')
@@ -26,9 +22,9 @@ function Home() {
 
   async function createUsers(){
     await api.post('/usuarios', {
-      name: inputName.current.value,
-      age: inputAge.current.value,
-      email: inputEmail.current.value
+      name: user.name,
+      age: user.age,
+      email: user.email,
     })
 
     location.reload()
@@ -40,22 +36,38 @@ function Home() {
     location.reload()
   }
 
-  const openModal = (id) => {
-    setUserIdToDelete(id);
-    setModalIsOpen(true);
+    function openModal(id){
+      setUserIdToDelete(id);
+      setModalIsOpen(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
-    setUserIdToDelete(null);
+    function closeModal(){
+      setModalIsOpen(false);
+      setUserIdToDelete(null);
   };
 
-  const confirmDelete = () => {
-    if (userIdToDelete !== null) {
-      deleteUsers(userIdToDelete);
-    }
-    closeModal();
+    function confirmDelete(){
+      if (userIdToDelete !== null) {
+        deleteUsers(userIdToDelete);
+      }
+      closeModal();
   };
+
+  async function editUser(id){
+    await api.put(`/usuarios/${id}`, user)
+
+    location.reload()
+  }
+
+  function openEditModal(user){
+    setUser(user)
+    setModalEdit(true)
+  }
+
+  function closeEditModal(){
+    setModalEdit(false)
+    setUser({ name: '', age: '', email: '' })
+  }
 
   useEffect(() => {
     getUsers()
@@ -65,11 +77,11 @@ function Home() {
   return (
 
     <div className='container'>
-      <form>
+      <form className="form">
           <h1>Cadastro de Usuarios</h1>
-          <input type="text" name='nome' placeholder="Nome" ref={inputName}/>
-          <input type="number" name='idade' placeholder="Idade" ref={inputAge}/>
-          <input type="email" name='email' placeholder="Email" ref={inputEmail}/>
+          <input type="text" name='nome' placeholder="Nome" value={user.name} onChange={(e) => setUser({ ...user, name: e.target.value })}/>
+          <input type="number" name='idade' placeholder="Idade" value={user.age} onChange={(e) => setUser({...user, age: e.target.value})}/>
+          <input type="email" name='email' placeholder="Email" value={user.email} onChange={(e) => setUser({...user, email: e.target.value})}/>
           <button type='button' onClick={createUsers}>Cadastrar</button>
       </form>
 
@@ -81,9 +93,15 @@ function Home() {
             <p>Email: <span> {user.email} </span> </p>
           </div>
 
-          <button onClick={() => openModal(user.id)}>
-            <FaTrash />
-          </button>
+          <div className="cardButton">
+            <button className="edit" onClick={() => openEditModal(user)}>
+              <FaPencilAlt />
+            </button>
+            
+            <button className="delete" onClick={() => openModal(user.id)}>
+              <FaTrash />
+            </button>
+          </div>
         </div>
       ))}
       
@@ -104,6 +122,25 @@ function Home() {
             <button className="cancel" onClick={closeModal}>Cancelar</button>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={modalEdit}
+        onRequestClose={closeEditModal}
+        contentLabel="Edição de usuario"
+        className='editModalBackground'
+      >
+        <div className="modalEdit">
+          <div className="titulo">
+              <h2>Edição de Usuario</h2>
+              <button onClick={closeEditModal}><IoMdClose /></button>
+            </div>
+          <input type="text" name='nome' placeholder="Nome" value={user.name} onChange={(e) => setUser({ ...user, name: e.target.value})}/> 
+          <input type="number" name='idade' placeholder="Idade" value={user.age} onChange={(e) => setUser({...user, age: e.target.value})}/>
+          <input type="email" name='email' placeholder="Email" value={user.email} onChange={(e) => setUser({...user, email: e.target.value})}/>
+          <button type='button' onClick={() => {editUser(user.id)}}>Editar</button>
+        </div>
+        
       </Modal>
 
     </div>

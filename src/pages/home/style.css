@@ -11,7 +11,7 @@ h1{
     text-align: center;
 }
 
-form{
+.form{
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -47,6 +47,13 @@ form{
         padding-left: 10px;
         outline: none;
     }
+
+    /*Retirar arrow/spinner do input number*/
+    & input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 }
 
 .card{
@@ -67,16 +74,26 @@ form{
         }
     }
 
+    & .cardButton{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
     & button{
         font-size: 16px;
         background-color: transparent;
-        color: grey;
+        color: #ffffffad;
         border: none;
         cursor: pointer;
     }
 
-    & button:hover{
+    & .delete:hover{
         color: #dc2626;
+    }
+
+    & .edit:hover{
+        color: #86efac;
     }
 }
 
@@ -94,8 +111,8 @@ form{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
-    color: #000000;
+    background-color: #2E2D4E;
+    color: #fff;
     padding: 20px;
     border-radius: 10px;
     height: 200px;
@@ -111,13 +128,11 @@ form{
         width: 100%;
 
         & .confirm:hover{
-            background-color: rgba(0, 128, 0, 0.507);
-            transition: 0.3s;
+            background-color: #24a754;
         }
 
         & .cancel:hover{
-            background-color: rgba(255, 0, 0, 0.555);
-            transition: 0.3s;
+            background-color: #dc2626;
         }
 
         & button{
@@ -125,8 +140,11 @@ form{
             background-color: rgba(128, 128, 128, 0.158);
             border-radius: 10px;
             padding: 10px;
-            border: 1px solid lightgrey;
+            border: 1px solid rgba(0, 0, 0, 0.39);
             cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+            color: #fff;
         }
     }
 
@@ -146,4 +164,72 @@ form{
             background-color: rgba(211, 211, 211, 0.301);
         }
     }
+}
+
+.modalEdit{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #2E2D4E;
+    max-width: 50%;
+    width: 400px;
+    margin-bottom: 20px;
+
+    & button {
+        border-radius: 30px;
+        background-color: #8B8AE1;
+        height: 40px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    & button:hover{
+        opacity: 0.8;
+    }
+
+    & input{
+        border: 1px solid #4E456C;
+        border-radius: 30px;
+        height: 40px;
+        background-color: #363653;
+        color: #fff;
+        font-size: 16px;
+        padding-left: 10px;
+        outline: none;
+    }
+
+    & .titulo{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        color: #fff;
+
+        & button{
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        & button:hover{
+            background-color: rgba(211, 211, 211, 0.301);
+        }
+    }
+}
+
+.editModalBackground{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.74);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
